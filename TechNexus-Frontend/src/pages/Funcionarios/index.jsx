@@ -10,6 +10,7 @@ export default function Funcionarios() {
   const [cargo, setCargo] = useState('');
   const [setor, setSetor] = useState('');
   const [erro, setErro] = useState('');
+  const [sucesso, setSucesso] = useState(''); // ✨ Novo estado para mensagem verde
 
   const buscarFuncionarios = async () => {
     try {
@@ -27,6 +28,9 @@ export default function Funcionarios() {
 
   const cadastrarFuncionario = async (e) => {
     e.preventDefault();
+    setErro('');
+    setSucesso(''); // Limpa mensagens anteriores
+    
     try {
       await api.post('/funcionarios', { nome, email, telefone, cargo, setor });
       setNome('');
@@ -35,7 +39,7 @@ export default function Funcionarios() {
       setCargo('');
       setSetor('');
       buscarFuncionarios();
-      alert('Funcionário cadastrado com sucesso!');
+      setSucesso('Funcionário cadastrado com sucesso!'); // ✨ Mensagem de sucesso na tela
     } catch (error) {
       setErro('Falha ao registrar novo funcionário. Verifique os campos ou a conexão com a API.');
     }
@@ -45,9 +49,12 @@ export default function Funcionarios() {
     <div className="modulo-container">
       <h2>Módulo de Funcionários</h2>
       
+      {/* 🛑 Alerta de Erro (Vermelho) */}
       {erro && <div className="alerta-erro">{erro}</div>}
 
-      {/* --- FORMULÁRIO FUTURISTA DE CADASTRO --- */}
+      {/* ✅ Alerta de Sucesso (Verde) */}
+      {sucesso && <div className="alerta-sucesso">{sucesso}</div>}
+
       <form onSubmit={cadastrarFuncionario} className="formulario-nexus">
         <h3>Cadastrar Novo Funcionário</h3>
         
@@ -77,7 +84,6 @@ export default function Funcionarios() {
         <button type="submit" className="btn-nexus">Salvar Registro</button>
       </form>
 
-      {/* --- TABELA DE LISTAGEM --- */}
       <div className="tabela-secao">
         <h3>Lista de Funcionários Cadastrados</h3>
         {funcionarios.length === 0 ? (

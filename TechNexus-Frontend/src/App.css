@@ -5,8 +5,11 @@
   --bg-inputs: rgba(15, 23, 42, 0.6);
   --bg-tabela-th: #1e293b;
   --bg-tabela-td: rgba(30, 41, 59, 0.4);
-  --texto-principal: #f8fafc;
+  
+  /* ⚪ TEXTO BRANCO NO DARK */
+  --texto-principal: #ffffff;
   --texto-secundario: #94a3b8;
+  
   --borda: rgba(255, 255, 255, 0.05);
 }
 
@@ -17,8 +20,11 @@
   --bg-inputs: #ffffff;
   --bg-tabela-th: #e2e8f0;
   --bg-tabela-td: #ffffff;
-  --texto-principal: #0f172a;
-  --texto-secundario: #475569;
+  
+  /* ⚫ TEXTO PRETO NO LIGHT */
+  --texto-principal: #000000;
+  --texto-secundario: #334155;
+  
   --borda: #cbd5e1;
 }
 

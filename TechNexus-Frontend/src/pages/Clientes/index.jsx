@@ -9,6 +9,7 @@ export default function Clientes() {
   const [telefone, setTelefone] = useState('');
   const [cpf, setCpf] = useState('');
   const [erro, setErro] = useState('');
+  const [sucesso, setSucesso] = useState(''); // ✨ Novo estado para mensagem verde
 
   const buscarClientes = async () => {
     try {
@@ -26,6 +27,9 @@ export default function Clientes() {
 
   const cadastrarCliente = async (e) => {
     e.preventDefault();
+    setErro('');
+    setSucesso(''); // Limpa mensagens anteriores
+    
     try {
       await api.post('/clientes', { nome, email, telefone, cpf });
       setNome('');
@@ -33,7 +37,7 @@ export default function Clientes() {
       setTelefone('');
       setCpf('');
       buscarClientes();
-      alert('Cliente cadastrado com sucesso!');
+      setSucesso('Cliente cadastrado com sucesso!'); // ✨ Mensagem de sucesso na tela
     } catch (error) {
       setErro('Falha ao registrar novo cliente. Verifique a conexão com a API.');
     }
@@ -43,9 +47,12 @@ export default function Clientes() {
     <div className="modulo-container">
       <h2>Módulo de Clientes</h2>
       
+      {/* 🛑 Alerta de Erro (Vermelho) */}
       {erro && <div className="alerta-erro">{erro}</div>}
 
-      {/* --- FORMULÁRIO FUTURISTA DE CADASTRO --- */}
+      {/* ✅ Alerta de Sucesso (Verde) */}
+      {sucesso && <div className="alerta-sucesso">{sucesso}</div>}
+
       <form onSubmit={cadastrarCliente} className="formulario-nexus">
         <h3>Cadastrar Novo Cliente</h3>
         
@@ -71,7 +78,6 @@ export default function Clientes() {
         <button type="submit" className="btn-nexus">Salvar Registro</button>
       </form>
 
-      {/* --- TABELA DE LISTAGEM --- */}
       <div className="tabela-secao">
         <h3>Lista de Clientes Cadastrados</h3>
         {clientes.length === 0 ? (
