@@ -36,7 +36,7 @@ public class ClienteService {
         return repository
                 .findAll()
                 .stream()
-                .map(f -> new ClienteResponseDTO(f.getId(), f.getNome(), f.getEmail(), f.getTelefone(), f.getCpf()))
+                .map(c -> new ClienteResponseDTO(c.getId(), c.getNome(), c.getEmail(), c.getTelefone(), c.getCpf()))
                 .toList();
     }
 

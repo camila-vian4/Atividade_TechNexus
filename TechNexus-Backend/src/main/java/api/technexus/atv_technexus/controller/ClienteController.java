@@ -25,7 +25,6 @@ public class ClienteController {
         service.cadastrar((clienteDTO));
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("mensagem", "Cliente cadastrado com sucesso! ✅"));
-
     }
 
     @GetMapping
