@@ -1,0 +1,32 @@
+.home-dashboard {
+  max-width: 1000px;
+  margin: 40px auto;
+  font-family: system-ui, sans-serif;
+  text-align: center;
+}
+.subtitulo {
+  color: #64748b;
+  font-size: 18px;
+  margin-bottom: 40px;
+}
+.cards-resumo {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+.card-status {
+  background: #f8fafc;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  width: 300px;
+  text-align: left;
+}
+.card-status h3 {
+  margin-top: 0;
+  color: #0f172a;
+}
+.card-status p {
+  color: #475569;
+  font-size: 14px;
+}
