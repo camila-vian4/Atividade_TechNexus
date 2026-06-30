@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../../service';
+import api from '../../service/index';
 import './style.css';
 
 export default function Funcionarios() {
@@ -17,7 +17,7 @@ export default function Funcionarios() {
       setFuncionarios(resposta.data);
       setErro('');
     } catch (error) {
-      setErro('Não foi possível carregar a lista de funcionários. Certifique-se de que o Back-end está rodando.');
+      setErro('Não foi possível carregar a lista de funcionários. Verifique se o Back-end está ativo.');
     }
   };
 
@@ -37,7 +37,7 @@ export default function Funcionarios() {
       buscarFuncionarios();
       alert('Funcionário cadastrado com sucesso!');
     } catch (error) {
-      setErro('Falha ao cadastrar o funcionário. Verifique a conexão ou os dados enviados.');
+      setErro('Falha ao registrar novo funcionário. Verifique os campos ou a conexão com a API.');
     }
   };
 
@@ -47,35 +47,41 @@ export default function Funcionarios() {
       
       {erro && <div className="alerta-erro">{erro}</div>}
 
+      {/* --- FORMULÁRIO FUTURISTA DE CADASTRO --- */}
       <form onSubmit={cadastrarFuncionario} className="formulario-nexus">
         <h3>Cadastrar Novo Funcionário</h3>
-        <div className="campo">
-          <label>Nome Completo:</label>
-          <input type="text" value={nome} onChange={e => setNome(e.target.value)} required />
+        
+        <div className="grid-campos">
+          <div className="campo">
+            <label>Nome Completo:</label>
+            <input type="text" value={nome} onChange={e => setNome(e.target.value)} required />
+          </div>
+          <div className="campo">
+            <label>E-mail:</label>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+          </div>
+          <div className="campo">
+            <label>Telefone:</label>
+            <input type="text" value={telefone} onChange={e => setTelefone(e.target.value)} required />
+          </div>
+          <div className="campo">
+            <label>Cargo:</label>
+            <input type="text" value={cargo} onChange={e => setCargo(e.target.value)} required />
+          </div>
+          <div className="campo">
+            <label>Setor:</label>
+            <input type="text" value={setor} onChange={e => setSetor(e.target.value)} required />
+          </div>
         </div>
-        <div className="campo">
-          <label>E-mail:</label>
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
-        </div>
-        <div className="campo">
-          <label>Telefone:</label>
-          <input type="text" value={telefone} onChange={e => setTelefone(e.target.value)} required />
-        </div>
-        <div className="campo">
-          <label>Cargo:</label>
-          <input type="text" value={cargo} onChange={e => setCargo(e.target.value)} required />
-        </div>
-        <div className="campo">
-          <label>Setor:</label>
-          <input type="text" value={setor} onChange={e => setSetor(e.target.value)} required />
-        </div>
+
         <button type="submit" className="btn-nexus">Salvar Registro</button>
       </form>
 
+      {/* --- TABELA DE LISTAGEM --- */}
       <div className="tabela-secao">
         <h3>Lista de Funcionários Cadastrados</h3>
         {funcionarios.length === 0 ? (
-          <p className="vazio">Nenhum registro encontrado.</p>
+          <p className="vazio">Nenhum registro encontrado no sistema.</p>
         ) : (
           <table className="tabela-nexus">
             <thead>

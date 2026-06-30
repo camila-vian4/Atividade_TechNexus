@@ -85,3 +85,188 @@
 .tabela-nexus tr:nth-child(even) {
   background-color: #f8fafc;
 }
+
+.modulo-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  font-family: 'Inter', system-ui, sans-serif;
+  padding: 0 20px;
+}
+
+/* Título de Módulo com efeito Glow sutil */
+.modulo-container h2 {
+  color: #f8fafc;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 30px;
+  position: relative;
+  display: inline-block;
+}
+
+.modulo-container h2::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+/* Alerta de Erro Holográfico */
+.alerta-erro {
+  background: rgba(239, 68, 68, 0.06);
+  color: #ef4444;
+  padding: 14px 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  font-size: 14px;
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 0 12px rgba(239, 68, 68, 0.05);
+}
+
+/* Formulário de Cadastro - Estilo Vidro Futurista (Glassmorphism) */
+.formulario-nexus {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+  padding: 32px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  margin-bottom: 45px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+}
+
+.formulario-nexus h3 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  color: #f1f5f9;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Grid de Inputs para não ficar uma linha gigante abaixo da outra */
+.grid-campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+}
+
+.campo label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #94a3b8;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+}
+
+/* Inputs Estilo Cyber */
+.campo input {
+  background: rgba(15, 23, 42, 0.6);
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 14px;
+  color: #f8fafc;
+  transition: all 0.3s ease;
+}
+
+.campo input:focus {
+  outline: none;
+  border-color: #38bdf8;
+  background: rgba(15, 23, 42, 0.9);
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Botão de Envio com Gradiente de Alta Performance */
+.btn-nexus {
+  background: linear-gradient(90deg, #0284c7 0%, #4f46e5 100%);
+  color: #ffffff;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+
+.btn-nexus:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+  filter: brightness(1.1);
+}
+
+.btn-nexus:active {
+  transform: translateY(0);
+}
+
+/* Seção da Tabela Corporativa */
+.tabela-secao h3 {
+  color: #f1f5f9;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.vazio {
+  color: #64748b;
+  font-style: italic;
+  background: rgba(30, 41, 59, 0.3);
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.05);
+  text-align: center;
+}
+
+/* Tabela Estilo Dashboard */
+.tabela-nexus {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 15px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tabela-nexus th, .tabela-nexus td {
+  padding: 16px 20px;
+  text-align: left;
+}
+
+.tabela-nexus th {
+  background-color: #1e293b;
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tabela-nexus td {
+  background-color: rgba(30, 41, 59, 0.4);
+  color: #cbd5e1;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.tabela-nexus tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela-nexus tr:hover td {
+  background-color: rgba(56, 189, 248, 0.03);
+  color: #f8fafc;
+}

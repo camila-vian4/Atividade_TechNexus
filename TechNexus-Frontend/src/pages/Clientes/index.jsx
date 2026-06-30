@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../../service';
+import api from '../../service/index';
 import './style.css';
 
 export default function Clientes() {
@@ -16,7 +16,7 @@ export default function Clientes() {
       setClientes(resposta.data);
       setErro('');
     } catch (error) {
-      setErro('Não foi possível carregar a lista de clientes. Certifique-se de que o Back-end está rodando.');
+      setErro('Não foi possível carregar a lista de clientes. Verifique se o Back-end está ativo.');
     }
   };
 
@@ -35,7 +35,7 @@ export default function Clientes() {
       buscarClientes();
       alert('Cliente cadastrado com sucesso!');
     } catch (error) {
-      setErro('Falha ao cadastrar o cliente. Verifique a conexão ou os dados enviados.');
+      setErro('Falha ao registrar novo cliente. Verifique a conexão com a API.');
     }
   };
 
@@ -45,31 +45,37 @@ export default function Clientes() {
       
       {erro && <div className="alerta-erro">{erro}</div>}
 
+      {/* --- FORMULÁRIO FUTURISTA DE CADASTRO --- */}
       <form onSubmit={cadastrarCliente} className="formulario-nexus">
         <h3>Cadastrar Novo Cliente</h3>
-        <div className="campo">
-          <label>Nome Completo:</label>
-          <input type="text" value={nome} onChange={e => setNome(e.target.value)} required />
+        
+        <div className="grid-campos">
+          <div className="campo">
+            <label>Nome Completo:</label>
+            <input type="text" value={nome} onChange={e => setNome(e.target.value)} required />
+          </div>
+          <div className="campo">
+            <label>E-mail:</label>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
+          </div>
+          <div className="campo">
+            <label>Telefone:</label>
+            <input type="text" value={telefone} onChange={e => setTelefone(e.target.value)} required />
+          </div>
+          <div className="campo">
+            <label>CPF:</label>
+            <input type="text" value={cpf} onChange={e => setCpf(e.target.value)} required />
+          </div>
         </div>
-        <div className="campo">
-          <label>E-mail:</label>
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
-        </div>
-        <div className="campo">
-          <label>Telefone:</label>
-          <input type="text" value={telefone} onChange={e => setTelefone(e.target.value)} required />
-        </div>
-        <div className="campo">
-          <label>CPF:</label>
-          <input type="text" value={cpf} onChange={e => setCpf(e.target.value)} required />
-        </div>
+
         <button type="submit" className="btn-nexus">Salvar Registro</button>
       </form>
 
+      {/* --- TABELA DE LISTAGEM --- */}
       <div className="tabela-secao">
         <h3>Lista de Clientes Cadastrados</h3>
         {clientes.length === 0 ? (
-          <p className="vazio">Nenhum registro encontrado.</p>
+          <p className="vazio">Nenhum registro encontrado no sistema.</p>
         ) : (
           <table className="tabela-nexus">
             <thead>
