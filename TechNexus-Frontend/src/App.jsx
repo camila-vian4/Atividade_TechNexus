@@ -1,14 +1,17 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import NavBar from './components/NavBar';
-import Home from './pages/Home';
-import Clientes from './pages/Clientes';
-import Funcionarios from './pages/Funcionarios';
+import Header from './components/Header/index';
+import NavBar from './components/NavBar/index';
+import Footer from './components/Footer/index';
+import Home from './pages/Home/index';
+import Clientes from './pages/Clientes/index';
+import Funcionarios from './pages/Funcionarios/index';
 import './App.css';
 
 function App() {
   return (
     <Router>
-      {/* A NavBar fica fixa no topo em todas as telas */}
+      {/* Estrutura de Layout Global do ERP */}
+      <Header />
       <NavBar />
       
       <main className="container-principal">
@@ -18,6 +21,8 @@ function App() {
           <Route path="/funcionarios" element={<Funcionarios />} />
         </Routes>
       </main>
+
+      <Footer />
     </Router>
   );
 }

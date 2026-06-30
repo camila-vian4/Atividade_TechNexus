@@ -1,0 +1,29 @@
+.footer-nexus {
+  background-color: #0f172a;
+  color: #64748b;
+  text-align: center;
+  padding: 20px 15px;
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  border-top: 1px solid #334155;
+  margin-top: 40px;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer-nexus p {
+  margin: 0;
+}
+
+.footer-devs {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.footer-devs strong {
+  color: #38bdf8; /* Deixa o título 'Desenvolvedores' no azul padrão do sistema */
+}
