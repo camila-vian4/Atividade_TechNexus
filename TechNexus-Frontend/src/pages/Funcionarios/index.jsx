@@ -4,13 +4,16 @@ import './style.css';
 
 export default function Funcionarios() {
   const [funcionarios, setFuncionarios] = useState([]);
+  const [idEdicao, setIdEdicao] = useState(null);
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [cargo, setCargo] = useState('');
   const [setor, setSetor] = useState('');
   const [erro, setErro] = useState('');
-  const [sucesso, setSucesso] = useState(''); // ✨ Novo estado para mensagem verde
+  const [sucesso, setSucesso] = useState('');
+  const [modalAberto, setModalAberto] = useState(false);
+  const [idParaDeletar, setIdParaDeletar] = useState(null);
 
   const buscarFuncionarios = async () => {
     try {
@@ -26,22 +29,80 @@ export default function Funcionarios() {
     buscarFuncionarios();
   }, []);
 
-  const cadastrarFuncionario = async (e) => {
+  const salvarFuncionario = async (e) => {
     e.preventDefault();
     setErro('');
-    setSucesso(''); // Limpa mensagens anteriores
+    setSucesso('');
     
+    const dadosFuncionario = { nome, email, telefone, cargo, setor };
+
     try {
-      await api.post('/funcionarios', { nome, email, telefone, cargo, setor });
+      if (idEdicao) {
+        await api.put(`/funcionarios/${idEdicao}`, dadosFuncionario);
+        setSucesso('Funcionário atualizado com sucesso!');
+        setIdEdicao(null);
+      } else {
+        await api.post('/funcionarios', dadosFuncionario);
+        setSucesso('Funcionário cadastrado com sucesso!');
+      }
+      
       setNome('');
       setEmail('');
       setTelefone('');
       setCargo('');
       setSetor('');
       buscarFuncionarios();
-      setSucesso('Funcionário cadastrado com sucesso!'); // ✨ Mensagem de sucesso na tela
     } catch (error) {
-      setErro('Falha ao registrar novo funcionário. Verifique os campos ou a conexão com a API.');
+      setErro('Falha ao processar requisição. Verifique os campos ou a conexão.');
+    }
+  };
+
+  const prepararEdicao = (objeto) => {
+    setIdEdicao(objeto.id);
+    setNome(objeto.nome);
+    setEmail(objeto.email);
+    setTelefone(objeto.telefone);
+    
+    // Se for no arquivo de Clientes:
+    if (objeto.cpf || objeto.CPF) {
+      setCpf(objeto.cpf || objeto.CPF || '');
+    }
+    // Se for no arquivo de Funcionários:
+    if (objeto.cargo) {
+      setCargo(objeto.cargo);
+      setSetor(objeto.setor);
+    }
+
+    setSucesso('');
+    setErro('');
+
+    // 🎯 O truque mágico está aqui: faz a página subir suavemente até o topo
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth' // Mantém o efeito de deslizar elegante
+    });
+  };
+
+  const abrirConfirmacaoDelecao = (id) => {
+    setIdParaDeletar(id);
+    setModalAberto(true);
+  };
+
+  const confirmarDelecao = async () => {
+    setModalAberto(false);
+    setErro('');
+    setSucesso('');
+
+    try {
+      await api.delete(`/funcionarios/${idParaDeletar}`);
+      setSucesso('Registro removido com sucesso!');
+      buscarFuncionarios();
+      if (idEdicao === idParaDeletar) {
+        setIdEdicao(null);
+        setNome(''); setEmail(''); setTelefone(''); setCargo(''); setSetor('');
+      }
+    } catch (error) {
+      setErro('Não foi possível deletar o registro.');
     }
   };
 
@@ -49,14 +110,11 @@ export default function Funcionarios() {
     <div className="modulo-container">
       <h2>Módulo de Funcionários</h2>
       
-      {/* 🛑 Alerta de Erro (Vermelho) */}
       {erro && <div className="alerta-erro">{erro}</div>}
-
-      {/* ✅ Alerta de Sucesso (Verde) */}
       {sucesso && <div className="alerta-sucesso">{sucesso}</div>}
 
-      <form onSubmit={cadastrarFuncionario} className="formulario-nexus">
-        <h3>Cadastrar Novo Funcionário</h3>
+      <form onSubmit={salvarFuncionario} className="formulario-nexus">
+        <h3>{idEdicao ? 'Atualizar Funcionário' : 'Cadastrar Novo Funcionário'}</h3>
         
         <div className="grid-campos">
           <div className="campo">
@@ -81,7 +139,21 @@ export default function Funcionarios() {
           </div>
         </div>
 
-        <button type="submit" className="btn-nexus">Salvar Registro</button>
+        <div className="botoes-form">
+          <button type="submit" className="btn-nexus">
+            {idEdicao ? 'Atualizar Registro' : 'Salvar Registro'}
+          </button>
+          {idEdicao && (
+            <button type="button" className="btn-cancelar" onClick={() => {
+              setIdEdicao(null);
+              setNome('');
+              setEmail('');
+              setTelefone('');
+              setCargo('');
+              setSetor('');
+            }}>Cancelar Edição</button>
+          )}
+        </div>
       </form>
 
       <div className="tabela-secao">
@@ -92,6 +164,7 @@ export default function Funcionarios() {
           <table className="tabela-nexus">
             <thead>
               <tr>
+                <th className="coluna-acoes">Ações</th>
                 <th>Nome</th>
                 <th>E-mail</th>
                 <th>Telefone</th>
@@ -100,8 +173,14 @@ export default function Funcionarios() {
               </tr>
             </thead>
             <tbody>
-              {funcionarios.map((f, index) => (
-                <tr key={index}>
+              {funcionarios.map((f) => (
+                <tr key={f.id || f.email}>
+                  <td className="coluna-acoes">
+                    <div className="wrapper-botoes">
+                      <button className="btn-acao btn-editar" onClick={() => prepararEdicao(f)} title="Editar">✏️</button>
+                      <button className="btn-acao btn-deletar" onClick={() => abrirConfirmacaoDelecao(f.id)} title="Deletar">🗑️</button>
+                    </div>
+                  </td>
                   <td>{f.nome}</td>
                   <td>{f.email}</td>
                   <td>{f.telefone}</td>
@@ -113,6 +192,21 @@ export default function Funcionarios() {
           </table>
         )}
       </div>
+
+      {/* 🎯 O MODAL FOI ADICIONADO AQUI: Antes do fechamento da última div */}
+      {modalAberto && (
+        <div className="modal-overlay">
+          <div className="modal-container">
+            <div className="modal-icone">⚠️</div>
+            <h3>Confirmar Exclusão</h3>
+            <p>Tem certeza absoluta que deseja deletar este funcionário? Esta ação não poderá ser desfeita.</p>
+            <div className="modal-botoes">
+              <button className="btn-modal-cancelar" onClick={() => setModalAberto(false)}>Cancelar</button>
+              <button className="btn-modal-confirmar" onClick={confirmarDelecao}>Excluir</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

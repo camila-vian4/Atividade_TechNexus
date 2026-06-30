@@ -4,12 +4,15 @@ import './style.css';
 
 export default function Clientes() {
   const [clientes, setClientes] = useState([]);
+  const [idEdicao, setIdEdicao] = useState(null);
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [cpf, setCpf] = useState('');
   const [erro, setErro] = useState('');
-  const [sucesso, setSucesso] = useState(''); // ✨ Novo estado para mensagem verde
+  const [sucesso, setSucesso] = useState('');
+  const [modalAberto, setModalAberto] = useState(false);
+  const [idParaDeletar, setIdParaDeletar] = useState(null);
 
   const buscarClientes = async () => {
     try {
@@ -25,21 +28,80 @@ export default function Clientes() {
     buscarClientes();
   }, []);
 
-  const cadastrarCliente = async (e) => {
+  const salvarCliente = async (e) => {
     e.preventDefault();
     setErro('');
-    setSucesso(''); // Limpa mensagens anteriores
+    setSucesso('');
     
+    // 🎯 GARANTIDO: Chave 'cpf' exatamente como o Spring Boot espera receber no @RequestBody
+    const dadosCliente = { nome, email, telefone, cpf };
+
     try {
-      await api.post('/clientes', { nome, email, telefone, cpf });
+      if (idEdicao) {
+        await api.put(`/clientes/${idEdicao}`, dadosCliente);
+        setSucesso('Cliente atualizado com sucesso!');
+        setIdEdicao(null);
+      } else {
+        await api.post('/clientes', dadosCliente);
+        setSucesso('Cliente cadastrado com sucesso!');
+      }
+      
       setNome('');
       setEmail('');
       setTelefone('');
       setCpf('');
       buscarClientes();
-      setSucesso('Cliente cadastrado com sucesso!'); // ✨ Mensagem de sucesso na tela
     } catch (error) {
-      setErro('Falha ao registrar novo cliente. Verifique a conexão com a API.');
+      setErro('Falha ao processar requisição. Verifique a API.');
+    }
+  };
+
+ const prepararEdicao = (objeto) => {
+    setIdEdicao(objeto.id);
+    setNome(objeto.nome);
+    setEmail(objeto.email);
+    setTelefone(objeto.telefone);
+    
+    // Se for no arquivo de Clientes:
+    if (objeto.cpf || objeto.CPF) {
+      setCpf(objeto.cpf || objeto.CPF || '');
+    }
+    // Se for no arquivo de Funcionários:
+    if (objeto.cargo) {
+      setCargo(objeto.cargo);
+      setSetor(objeto.setor);
+    }
+
+    setSucesso('');
+    setErro('');
+
+    // 🎯 O truque mágico está aqui: faz a página subir suavemente até o topo
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth' // Mantém o efeito de deslizar elegante
+    });
+  };
+
+  const abrirConfirmacaoDelecao = (id) => {
+    setIdParaDeletar(id);
+    setModalAberto(true);
+  };
+
+  const confirmarDelecao = async () => {
+    setModalAberto(false);
+    setErro('');
+    setSucesso('');
+
+    try {
+      await api.delete(`/clientes/${idParaDeletar}`);
+      setSucesso('Cliente removido com sucesso!');
+      buscarClientes();
+      if (idEdicao === idParaDeletar) {
+        setIdEdicao(null);
+        setNome(''); setEmail(''); setTelefone(''); setCpf('');
+      }
+    } catch (error) {
+      setErro('Não foi possível deletar o cliente.');
     }
   };
 
@@ -47,14 +109,11 @@ export default function Clientes() {
     <div className="modulo-container">
       <h2>Módulo de Clientes</h2>
       
-      {/* 🛑 Alerta de Erro (Vermelho) */}
       {erro && <div className="alerta-erro">{erro}</div>}
-
-      {/* ✅ Alerta de Sucesso (Verde) */}
       {sucesso && <div className="alerta-sucesso">{sucesso}</div>}
 
-      <form onSubmit={cadastrarCliente} className="formulario-nexus">
-        <h3>Cadastrar Novo Cliente</h3>
+      <form onSubmit={salvarCliente} className="formulario-nexus">
+        <h3>{idEdicao ? 'Atualizar Cliente' : 'Cadastrar Novo Cliente'}</h3>
         
         <div className="grid-campos">
           <div className="campo">
@@ -75,7 +134,17 @@ export default function Clientes() {
           </div>
         </div>
 
-        <button type="submit" className="btn-nexus">Salvar Registro</button>
+        <div className="botoes-form">
+          <button type="submit" className="btn-nexus">
+            {idEdicao ? 'Atualizar Registro' : 'Salvar Registro'}
+          </button>
+          {idEdicao && (
+            <button type="button" className="btn-cancelar" onClick={() => {
+              setIdEdicao(null);
+              setNome(''); setEmail(''); setTelefone(''); setCpf('');
+            }}>Cancelar Edição</button>
+          )}
+        </div>
       </form>
 
       <div className="tabela-secao">
@@ -86,25 +155,44 @@ export default function Clientes() {
           <table className="tabela-nexus">
             <thead>
               <tr>
+                <th className="coluna-acoes">Ações</th>
                 <th>Nome</th>
                 <th>E-mail</th>
                 <th>Telefone</th>
-                <th>CPF</th>
               </tr>
             </thead>
             <tbody>
-              {clientes.map((c, index) => (
-                <tr key={index}>
+              {clientes.map((c) => (
+                <tr key={c.id || c.cpf || c.CPF}>
+                  <td className="coluna-acoes">
+                    <div className="wrapper-botoes">
+                      <button className="btn-acao btn-editar" onClick={() => prepararEdicao(c)} title="Editar">✏️</button>
+                      <button className="btn-acao btn-deletar" onClick={() => abrirConfirmacaoDelecao(c.id)} title="Deletar">🗑️</button>
+                    </div>
+                  </td>
                   <td>{c.nome}</td>
                   <td>{c.email}</td>
                   <td>{c.telefone}</td>
-                  <td>{c.cpf}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
+
+      {modalAberto && (
+        <div className="modal-overlay">
+          <div className="modal-container">
+            <div className="modal-icone">⚠️</div>
+            <h3>Excluir?</h3>
+            <p>Tem certeza que deseja deletar este cliente? Esta ação não poderá ser desfeita.</p>
+            <div className="modal-botoes">
+              <button className="btn-modal-cancelar" onClick={() => setModalAberto(false)}>Cancelar</button>
+              <button className="btn-modal-confirmar" onClick={confirmarDelecao}>Excluir</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
