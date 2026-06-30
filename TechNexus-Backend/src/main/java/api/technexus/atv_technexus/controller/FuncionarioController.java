@@ -14,7 +14,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/funcionarios")
-@CrossOrigin("*")
 public class FuncionarioController {
 
     @Autowired
