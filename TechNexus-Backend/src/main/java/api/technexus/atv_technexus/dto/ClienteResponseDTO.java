@@ -5,17 +5,15 @@ public class ClienteResponseDTO {
     private String nome;
     private String email;
     private String telefone;
-    private String cpf;
 
     public ClienteResponseDTO() {
     }
 
-    public ClienteResponseDTO(Long id, String nome, String email, String telefone, String cpf) {
+    public ClienteResponseDTO(Long id, String nome, String email, String telefone) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.telefone = telefone;
-        this.cpf = cpf;
     }
 
     public Long getId() {
@@ -48,14 +46,6 @@ public class ClienteResponseDTO {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
     }
 }
 
