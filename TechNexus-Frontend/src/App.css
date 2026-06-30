@@ -1,11 +1,36 @@
+/* Definição de Cores para o Tema Dark (Padrão) */
+:root {
+  --bg-principal: #0b0f19;
+  --bg-cards: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+  --bg-inputs: rgba(15, 23, 42, 0.6);
+  --bg-tabela-th: #1e293b;
+  --bg-tabela-td: rgba(30, 41, 59, 0.4);
+  --texto-principal: #f8fafc;
+  --texto-secundario: #94a3b8;
+  --borda: rgba(255, 255, 255, 0.05);
+}
+
+/* Definição de Cores para o Tema Light */
+[data-theme='light'] {
+  --bg-principal: #f8fafc;
+  --bg-cards: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+  --bg-inputs: #ffffff;
+  --bg-tabela-th: #e2e8f0;
+  --bg-tabela-td: #ffffff;
+  --texto-principal: #0f172a;
+  --texto-secundario: #475569;
+  --borda: #cbd5e1;
+}
+
 body {
   margin: 0;
-  background-color: #0b0f19; /* Azul escuro quase preto espacial */
-  color: #f8fafc;
+  background-color: var(--bg-principal);
+  color: var(--texto-principal);
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .container-principal {
   padding: 30px;
-  min-height: calc(100vh - 180px); /* Garante que o footer não suba */
+  min-height: calc(100vh - 180px);
 }
