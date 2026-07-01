@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../service/index';
+import toast from 'react-hot-toast'; // 🎯 Importando o disparador de toasts
 import './style.css';
 
 export default function Funcionarios() {
@@ -10,8 +11,6 @@ export default function Funcionarios() {
   const [telefone, setTelefone] = useState('');
   const [cargo, setCargo] = useState('');
   const [setor, setSetor] = useState('');
-  const [erro, setErro] = useState('');
-  const [sucesso, setSucesso] = useState('');
   const [modalAberto, setModalAberto] = useState(false);
   const [idParaDeletar, setIdParaDeletar] = useState(null);
 
@@ -19,9 +18,9 @@ export default function Funcionarios() {
     try {
       const resposta = await api.get('/funcionarios');
       setFuncionarios(resposta.data);
-      setErro('');
     } catch (error) {
-      setErro('Não foi possível carregar a lista de funcionários. Verifique se o Back-end está ativo.');
+      const msgBack = error.response?.data?.message || (typeof error.response?.data === 'string' ? error.response.data : null) || 'Não foi possível carregar a lista de funcionários.';
+      toast.error(msgBack, { className: 'alerta-erro' });
     }
   };
 
@@ -31,19 +30,16 @@ export default function Funcionarios() {
 
   const salvarFuncionario = async (e) => {
     e.preventDefault();
-    setErro('');
-    setSucesso('');
-    
     const dadosFuncionario = { nome, email, telefone, cargo, setor };
 
     try {
       if (idEdicao) {
         await api.put(`/funcionarios/${idEdicao}`, dadosFuncionario);
-        setSucesso('Funcionário atualizado com sucesso!');
+        toast.success('Funcionário updated com sucesso!', { className: 'alerta-sucesso' });
         setIdEdicao(null);
       } else {
         await api.post('/funcionarios', dadosFuncionario);
-        setSucesso('Funcionário cadastrado com sucesso!');
+        toast.success('Funcionário cadastrado com sucesso!', { className: 'alerta-sucesso' });
       }
       
       setNome('');
@@ -53,7 +49,8 @@ export default function Funcionarios() {
       setSetor('');
       buscarFuncionarios();
     } catch (error) {
-      setErro('Falha ao processar requisição. Verifique os campos ou a conexão.');
+      const msgBack = error.response?.data?.message || (typeof error.response?.data === 'string' ? error.response.data : null) || 'Falha ao processar requisição. Verifique os campos.';
+      toast.error(msgBack, { className: 'alerta-erro' });
     }
   };
 
@@ -63,23 +60,15 @@ export default function Funcionarios() {
     setEmail(objeto.email);
     setTelefone(objeto.telefone);
     
-    // Se for no arquivo de Clientes:
-    if (objeto.cpf || objeto.CPF) {
-      setCpf(objeto.cpf || objeto.CPF || '');
-    }
-    // Se for no arquivo de Funcionários:
     if (objeto.cargo) {
       setCargo(objeto.cargo);
       setSetor(objeto.setor);
     }
 
-    setSucesso('');
-    setErro('');
-
-    // 🎯 O truque mágico está aqui: faz a página subir suavemente até o topo
+    // 🎯 Rolagem suave para o topo
     window.scrollTo({
       top: 0,
-      behavior: 'smooth' // Mantém o efeito de deslizar elegante
+      behavior: 'smooth'
     });
   };
 
@@ -90,28 +79,24 @@ export default function Funcionarios() {
 
   const confirmarDelecao = async () => {
     setModalAberto(false);
-    setErro('');
-    setSucesso('');
 
     try {
       await api.delete(`/funcionarios/${idParaDeletar}`);
-      setSucesso('Registro removido com sucesso!');
+      toast.success('Registro removido com sucesso!', { className: 'alerta-sucesso' });
       buscarFuncionarios();
       if (idEdicao === idParaDeletar) {
         setIdEdicao(null);
         setNome(''); setEmail(''); setTelefone(''); setCargo(''); setSetor('');
       }
     } catch (error) {
-      setErro('Não foi possível deletar o registro.');
+      const msgBack = error.response?.data?.message || (typeof error.response?.data === 'string' ? error.response.data : null) || 'Não foi possível deletar o registro.';
+      toast.error(msgBack, { className: 'alerta-erro' });
     }
   };
 
   return (
     <div className="modulo-container">
       <h2>Módulo de Funcionários</h2>
-      
-      {erro && <div className="alerta-erro">{erro}</div>}
-      {sucesso && <div className="alerta-sucesso">{sucesso}</div>}
 
       <form onSubmit={salvarFuncionario} className="formulario-nexus">
         <h3>{idEdicao ? 'Atualizar Funcionário' : 'Cadastrar Novo Funcionário'}</h3>
@@ -146,11 +131,7 @@ export default function Funcionarios() {
           {idEdicao && (
             <button type="button" className="btn-cancelar" onClick={() => {
               setIdEdicao(null);
-              setNome('');
-              setEmail('');
-              setTelefone('');
-              setCargo('');
-              setSetor('');
+              setNome(''); setEmail(''); setTelefone(''); setCargo(''); setSetor('');
             }}>Cancelar Edição</button>
           )}
         </div>
@@ -193,7 +174,6 @@ export default function Funcionarios() {
         )}
       </div>
 
-      {/* 🎯 O MODAL FOI ADICIONADO AQUI: Antes do fechamento da última div */}
       {modalAberto && (
         <div className="modal-overlay">
           <div className="modal-container">

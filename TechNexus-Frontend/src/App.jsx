@@ -6,6 +6,7 @@ import Footer from './components/Footer/index';
 import Home from './pages/Home/index';
 import Clientes from './pages/Clientes/index';
 import Funcionarios from './pages/Funcionarios/index';
+import { Toaster } from 'react-hot-toast'; // 🎯 Importação global do gerenciador de Toasts
 import './App.css';
 
 function App() {
@@ -22,6 +23,9 @@ function App() {
 
   return (
     <Router>
+      {/* 🎯 O Toaster fica aqui para gerenciar os balões no topo direito da tela */}
+      <Toaster position="top-right" reverseOrder={false} />
+      
       <Header />
       {/* Passando o tema atual e a função de clique para a NavBar */}
       <NavBar tema={tema} aoAlternarTema={alternarTema} />

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../service/index';
+import toast from 'react-hot-toast'; // 🎯 Importando o disparador de toasts
 import './style.css';
 
 export default function Clientes() {
@@ -9,8 +10,6 @@ export default function Clientes() {
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [cpf, setCpf] = useState('');
-  const [erro, setErro] = useState('');
-  const [sucesso, setSucesso] = useState('');
   const [modalAberto, setModalAberto] = useState(false);
   const [idParaDeletar, setIdParaDeletar] = useState(null);
 
@@ -18,9 +17,10 @@ export default function Clientes() {
     try {
       const resposta = await api.get('/clientes');
       setClientes(resposta.data);
-      setErro('');
     } catch (error) {
-      setErro('Não foi possível carregar a lista de clientes. Verifique se o Back-end está ativo.');
+      // 🎯 Pega a mensagem real do Spring Boot ou usa uma padrão
+      const msgBack = error.response?.data?.message || (typeof error.response?.data === 'string' ? error.response.data : null) || 'Não foi possível carregar os clientes.';
+      toast.error(msgBack, { className: 'alerta-erro' });
     }
   };
 
@@ -30,20 +30,16 @@ export default function Clientes() {
 
   const salvarCliente = async (e) => {
     e.preventDefault();
-    setErro('');
-    setSucesso('');
-    
-    // 🎯 GARANTIDO: Chave 'cpf' exatamente como o Spring Boot espera receber no @RequestBody
     const dadosCliente = { nome, email, telefone, cpf };
 
     try {
       if (idEdicao) {
         await api.put(`/clientes/${idEdicao}`, dadosCliente);
-        setSucesso('Cliente atualizado com sucesso!');
+        toast.success('Cliente atualizado com sucesso!', { className: 'alerta-sucesso' });
         setIdEdicao(null);
       } else {
         await api.post('/clientes', dadosCliente);
-        setSucesso('Cliente cadastrado com sucesso!');
+        toast.success('Cliente cadastrado com sucesso!', { className: 'alerta-sucesso' });
       }
       
       setNome('');
@@ -52,33 +48,26 @@ export default function Clientes() {
       setCpf('');
       buscarClientes();
     } catch (error) {
-      setErro('Falha ao processar requisição. Verifique a API.');
+      // 🎯 Captura o erro exato de validação ou duplicidade vindo da API
+      const msgBack = error.response?.data?.message || (typeof error.response?.data === 'string' ? error.response.data : null) || 'Verifique os dados do seu formulário';
+      toast.error(msgBack, { className: 'alerta-erro' });
     }
   };
 
- const prepararEdicao = (objeto) => {
+  const prepararEdicao = (objeto) => {
     setIdEdicao(objeto.id);
     setNome(objeto.nome);
     setEmail(objeto.email);
     setTelefone(objeto.telefone);
     
-    // Se for no arquivo de Clientes:
     if (objeto.cpf || objeto.CPF) {
       setCpf(objeto.cpf || objeto.CPF || '');
     }
-    // Se for no arquivo de Funcionários:
-    if (objeto.cargo) {
-      setCargo(objeto.cargo);
-      setSetor(objeto.setor);
-    }
 
-    setSucesso('');
-    setErro('');
-
-    // 🎯 O truque mágico está aqui: faz a página subir suavemente até o topo
+    // 🎯 Mantendo sua funcionalidade de subir a página suavemente ao editar
     window.scrollTo({
       top: 0,
-      behavior: 'smooth' // Mantém o efeito de deslizar elegante
+      behavior: 'smooth'
     });
   };
 
@@ -89,28 +78,24 @@ export default function Clientes() {
 
   const confirmarDelecao = async () => {
     setModalAberto(false);
-    setErro('');
-    setSucesso('');
 
     try {
       await api.delete(`/clientes/${idParaDeletar}`);
-      setSucesso('Cliente removido com sucesso!');
+      toast.success('Cliente removido com sucesso!', { className: 'alerta-sucesso' });
       buscarClientes();
       if (idEdicao === idParaDeletar) {
         setIdEdicao(null);
         setNome(''); setEmail(''); setTelefone(''); setCpf('');
       }
     } catch (error) {
-      setErro('Não foi possível deletar o cliente.');
+      const msgBack = error.response?.data?.message || (typeof error.response?.data === 'string' ? error.response.data : null) || 'Não foi possível deletar o cliente.';
+      toast.error(msgBack, { className: 'alerta-erro' });
     }
   };
 
   return (
     <div className="modulo-container">
       <h2>Módulo de Clientes</h2>
-      
-      {erro && <div className="alerta-erro">{erro}</div>}
-      {sucesso && <div className="alerta-sucesso">{sucesso}</div>}
 
       <form onSubmit={salvarCliente} className="formulario-nexus">
         <h3>{idEdicao ? 'Atualizar Cliente' : 'Cadastrar Novo Cliente'}</h3>
